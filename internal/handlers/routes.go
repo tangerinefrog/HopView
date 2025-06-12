@@ -10,4 +10,5 @@ func SetupRoutes(r *gin.Engine) {
 
 	r.GET("/ping", pingHandler)
 	r.GET("/", mainHandler)
+	r.GET("api/traceroute", tracerouteHandler)
 }
