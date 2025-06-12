@@ -2,7 +2,6 @@ package network
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -21,7 +20,6 @@ func TraceRoute(url string) ([]models.Node, error) {
 		return nil, err
 	}
 
-	fmt.Println(out)
 	regex = regexp.MustCompile(tracerouteRegex)
 	nodes := make([]models.Node, 0)
 
@@ -54,8 +52,6 @@ func extractNode(hopLine string) *models.Node {
 
 	latency, err := strconv.ParseFloat(match[6], 32)
 
-	log.Printf("line: %s\nlatency:%v ms\n", hopLine, latency)
-	log.Printf("groups: [%v]\n", match)
 	if err != nil {
 		return nil
 	}
