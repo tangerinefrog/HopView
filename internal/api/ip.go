@@ -5,17 +5,22 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
 
 type locationResponse struct {
-	Latitude  float32 `json:"lat"`
-	Longitude float32 `json:"lon"`
+	Location struct {
+		Latitude  string `json:"latitude"`
+		Longitude string `json:"longitude"`
+	} `json:"location"`
 }
 
-const ipProviderUrl string = "http://ip-api.com/json/%s?fields=lat,lon"
+const ipProviderUrl string = "https://api.ipgeolocation.io/v2/ipgeo?apiKey=%s&ip=%s&fields=location.latitude,location.longitude"
 
 func GetIpLocation(ip string) (locationResponse, error) {
-	url := fmt.Sprintf(ipProviderUrl, ip)
+	apiKey := os.Getenv("IP_API_KEY")
+
+	url := fmt.Sprintf(ipProviderUrl, apiKey, ip)
 	res, err := http.Get(url)
 	if err != nil {
 		return locationResponse{}, err

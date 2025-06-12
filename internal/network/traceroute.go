@@ -1,6 +1,7 @@
 package network
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -26,14 +27,19 @@ func TraceRoute(url string) ([]models.Node, error) {
 	for _, r := range results {
 		node := extractNode(r)
 		if node != nil {
-			location, err := api.GetIpLocation(node.IP)
+			resp, err := api.GetIpLocation(node.IP)
+			fmt.Printf("LOCATION: %v", err)
 			if err != nil {
-				return nil, err
+				continue
 			}
 
-			if location.Latitude != 0 && location.Longitude != 0 {
-				node.Latitude = location.Latitude
-				node.Longitude = location.Longitude
+			location := resp.Location
+			lat, _ := strconv.ParseFloat(location.Latitude, 64)
+			lon, _ := strconv.ParseFloat(location.Longitude, 64)
+
+			if lat != 0 && lon != 0 {
+				node.Latitude = lat
+				node.Longitude = lon
 
 				nodes = append(nodes, *node)
 			}
