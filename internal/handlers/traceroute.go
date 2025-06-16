@@ -1,19 +1,57 @@
 package handlers
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"tangerinefrog/HopView/internal/models"
 	"tangerinefrog/HopView/internal/network"
 
 	"github.com/gin-gonic/gin"
 )
 
 func tracerouteHandler(c *gin.Context) {
-	url := c.Query("url")
-	nodes, err := network.TraceRoute(url)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Could not get route values from provided URL"})
+	target := c.Query("target")
+	if target == "" {
+		c.String(http.StatusBadRequest, "Missing 'target' query param")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"endpoints": nodes})
+	flusher, ok := c.Writer.(http.Flusher)
+	if !ok {
+		c.String(http.StatusInternalServerError, "Streaming unsupported")
+		return
+	}
+
+	c.Header("Cache-Control", "no-cache")
+	c.Header("Content-Type", "text/event-stream")
+	c.Header("Connection", "keep-alive")
+
+	nodesChan := make(chan *models.Node)
+	ctx := c.Request.Context()
+
+	go network.TraceRoute(ctx, target, nodesChan)
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case node, ok := <-nodesChan:
+			if !ok {
+				return
+			}
+			nodeBytes, err := json.Marshal(node)
+			if err != nil {
+				c.String(http.StatusInternalServerError, "Error parsing node to JSON format")
+				return
+			}
+
+			_, err = fmt.Fprintf(c.Writer, "data: %s\n\n", string(nodeBytes))
+			if err != nil {
+				c.String(http.StatusInternalServerError, "Error writing node data to buffer")
+				return
+			}
+
+			flusher.Flush()
+		}
+	}
 }

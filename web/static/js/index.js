@@ -1,37 +1,55 @@
-const input = document.getElementById('urlInput')
+const input = document.getElementById('targetInput');
 input.addEventListener('keydown', async (e) => {
-    if(e.code === 'Enter') {
-        const url = e.target.value;
-        if (url != null)  {
-            const nodes = await getUrlNodes(url);
-            const coords = parseCoordinates(nodes);
-            console.log(coords);
-            drawRoute(coords);
+    if (e.code === 'Enter') {
+        const target = e.target.value;
+        if (target != null) {
+            getTargetNodes(target);
         }
     }
 });
 
-async function getUrlNodes(url){
-    try{
-        const resp = await fetch(`/api/traceroute?url=${url}`);
-        const body = await resp.json();
+let previousCoordinates = [];
+const nodesQueue = [];
 
-        if (!resp.ok) {
-            throw new Error(`Traceroute endpoint status code: ${resp.status}, body:\n${body}`);
-        }
+function getTargetNodes(target) {
+    reset();
 
-        if(body.endpoints?.length > 0){
-            return body.endpoints
-        } else {
-            return []
+    const es = new EventSource(`/api/traceroute?target=${target}`);
+
+    es.onmessage = function (e) {
+        const node = JSON.parse(e.data);
+        if (node) {
+            drawNode(node);
         }
-    } catch (error) {
-        console.error(error.message);
-    }
+    };
+
+    es.onerror = function () {
+        es.close();
+    };
 }
 
-function parseCoordinates(nodes){
-    return nodes.map(n => {
-        return [n.Longitude, n.Latitude]
-    });
+function drawNode(node) {
+    const coordinates = parseCoordinates(node);
+    if (coordinates.length === 0) {
+        return;
+    }
+
+    if (previousCoordinates.length === 0) {
+        
+    } else {
+        addLine(previousCoordinates, coordinates);
+    }
+
+    addMarker(coordinates, node.ip);
+
+    previousCoordinates = coordinates;
+}
+
+function reset() {
+    previousCoordinates = [];
+    clearMap();
+}
+
+function parseCoordinates(node) {
+    return [node.longitude, node.latitude];
 }

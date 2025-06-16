@@ -1,0 +1,22 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#map {
+  height: 100%;
+}
+
+.target-input-box {
+  margin: auto;
+}
+
+.custom-marker {
+  width: 20px;
+  height: 20px;
+  background-color: #007cbf;
+  border-radius: 50%;
+  cursor: pointer;
+}

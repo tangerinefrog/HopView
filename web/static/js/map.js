@@ -5,44 +5,76 @@ const map = new maplibregl.Map({
     attributionControl: false
 });
 
+let markers = [];
+const linePrefix = 'line-';
+
 map.on('style.load', () => {
     map.setProjection({
         type: 'globe',
     });
 });
 
-function drawRoute(coordinates){
-    const route = {
-        'type': 'FeatureCollection',
-        'features': [
-            {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'LineString',
-                    'coordinates': coordinates
-                }
-            }
-        ]
-    };
+function addMarker(coords, text) {
+    const markerEl = document.createElement('div');
+    markerEl.className = 'custom-marker';
 
-    const source = map.getSource('route');
-    if (source){
-        map.removeLayer('route');
-        map.removeSource('route');
-    }
+    const popup = new maplibregl.Popup({
+        closeButton: false,
+    })
+        .setHTML(text);
 
-    map.addSource('route', {
-        'type': 'geojson',
-        'data': route
+    const marker = new maplibregl.Marker(markerEl)
+        .setLngLat(coords)
+        .setPopup(popup)
+        .addTo(map);
+
+    markers.push(marker);
+}
+
+function addLine(start, end) {
+    const id = linePrefix + crypto.randomUUID();
+
+    map.addSource(id, {
+        type: 'geojson',
+        data: {
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: [start, end],
+            },
+        },
     });
 
     map.addLayer({
-        'id': 'route',
-        'source': 'route',
-        'type': 'line',
-        'paint': {
-            'line-width': 2,
-            'line-color': '#007cbf'
-        }
+        id: id,
+        type: 'line',
+        source: id,
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round',
+        },
+        paint: {
+            'line-color': '#ff0000',
+            'line-width': 3,
+        },
     });
+}
+
+function clearMap() {
+    if (markers) {
+        markers.forEach(m => m.remove());
+        markers = [];
+    }
+
+    const lineLayers = map.getStyle().layers?.filter(l => l.id.startsWith(linePrefix));
+    if (lineLayers) {
+        lineLayers.forEach(l => {
+            if (map.getLayer(l.id)) {
+                map.removeLayer(l.id);
+            }
+            if (map.getSource(l.id)) {
+                map.removeSource(l.id);
+            }
+        });
+    }
 }
