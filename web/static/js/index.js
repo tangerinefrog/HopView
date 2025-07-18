@@ -1,29 +1,16 @@
 const input = document.getElementById('targetInput');
-const loader = document.getElementById('inputLoader');
+const loaderBtn = document.getElementById('loaderBtn');
 const errorBox = document.getElementById('errorMessage');
 
 const nodesQueue = [];
 let previousCoordinates = [];
-
-input.addEventListener('keydown', async (e) => {
-    if (e.code === 'Enter') {
-        hideError();
-
-        const target = e.target.value?.trim();
-        if (!isValidUrlOrIP(target)) {
-            showError('Please enter a valid URL or IP address.');
-            return;
-        }
-
-        getTargetNodes(target);
-    }
-});
+let es = null;
 
 function getTargetNodes(target) {
     reset();
     toggleLoader(true);
 
-    const es = new EventSource(`/api/traceroute?target=${target}`);
+    es = new EventSource(`/api/traceroute?target=${target}`);
 
     es.onmessage = function (e) {
         const node = JSON.parse(e.data);
@@ -35,11 +22,13 @@ function getTargetNodes(target) {
     es.addEventListener("done", function () {
         toggleLoader(false);
         es.close();
+        es = null;
     });
 
     es.onerror = function () {
         toggleLoader(false);
         es.close();
+        es = null;
     };
 }
 
@@ -90,6 +79,28 @@ function hideError() {
 }
 
 function toggleLoader(show) {
-    loader.style.display = show ? 'block' : 'none';
+    loaderBtn.style.display = show ? 'block' : 'none';
     input.disabled = show;
 }
+
+function cancelTrace() {
+    es?.close();
+    toggleLoader(false);
+    reset();
+}
+
+input.addEventListener('keydown', async (e) => {
+    if (e.code === 'Enter') {
+        hideError();
+
+        const target = e.target.value?.trim();
+        if (!isValidUrlOrIP(target)) {
+            showError('Please enter a valid URL or IP address.');
+            return;
+        }
+
+        getTargetNodes(target);
+    }
+});
+
+loaderBtn.addEventListener('click', cancelTrace);

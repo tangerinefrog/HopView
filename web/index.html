@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +10,14 @@
 
     <link href='static/css/style.css' rel='stylesheet' />
 </head>
+
 <body>
     <div class="container">
         <div class="target-input-box">
             <label for="targetInput">Endpoint URL or IP</label>
             <div class="input-wrapper">
                 <input id="targetInput" type="text" placeholder="Enter endpoint or IP">
-                <div class="loader" id="inputLoader"></div>
+                <button class="loader-btn" id="loaderBtn" title="Stop trace"></button>
             </div>
             <div id="errorMessage" class="error-message"></div>
         </div>
@@ -26,4 +28,5 @@
     <script src="static/js/map.js"></script>
     <script src="static/js/index.js"></script>
 </body>
+
 </html>
