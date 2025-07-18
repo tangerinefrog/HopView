@@ -10,12 +10,19 @@
     <link href='static/css/style.css' rel='stylesheet' />
 </head>
 <body>
-    <div class="target-input-box">
-        <label for="targetInput">Endpoint URL or IP</label>
-        <input id="targetInput" type="text">
+    <div class="container">
+        <div class="target-input-box">
+            <label for="targetInput">Endpoint URL or IP</label>
+            <div class="input-wrapper">
+                <input id="targetInput" type="text" placeholder="Enter endpoint or IP">
+                <div class="loader" id="inputLoader"></div>
+            </div>
+            <div id="errorMessage" class="error-message"></div>
+        </div>
+
+        <div id="map"></div>
     </div>
 
-    <div id='map'></div>
     <script src="static/js/map.js"></script>
     <script src="static/js/index.js"></script>
 </body>

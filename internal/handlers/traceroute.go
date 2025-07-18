@@ -34,9 +34,13 @@ func tracerouteHandler(c *gin.Context) {
 	for {
 		select {
 		case <-ctx.Done():
+			fmt.Fprint(c.Writer, "event: done\ndata: {}\n\n")
+			flusher.Flush()
 			return
 		case node, ok := <-nodesChan:
 			if !ok {
+				fmt.Fprint(c.Writer, "event: done\ndata:{}\n\n")
+				flusher.Flush()
 				return
 			}
 			nodeBytes, err := json.Marshal(node)

@@ -78,3 +78,10 @@ function clearMap() {
         });
     }
 }
+
+function flyTo(coordinates) {
+    map.flyTo({
+        center: coordinates,
+        essential: true,
+    })
+}

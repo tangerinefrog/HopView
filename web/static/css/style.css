@@ -1,17 +1,77 @@
-body {
+body, html {
   margin: 0;
   padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f4f4;
 }
 
-html,
-body,
-#map {
+.container {
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }
 
 .target-input-box {
-  margin: auto;
+  background-color: #fff;
+  padding: 15px 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
 }
+
+.target-input-box label {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 300px;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 10px 36px 10px 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.loader {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  border: 2px solid #ccc;
+  border-top-color: #007cbf;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: none;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-message {
+  color: red;
+  font-size: 13px;
+  margin-top: 6px;
+  display: none;
+}
+
+#map {
+  flex: 1;
+}
+
 
 .custom-marker {
   width: 20px;
