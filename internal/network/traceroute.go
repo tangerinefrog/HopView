@@ -11,12 +11,10 @@ import (
 
 const tracerouteRegex string = `^\s*\d+[\s\*]+([a-zA-Z-\.\d]*) \((((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4})\)\s+(\d+\.*\d*) ms`
 
-var regex *regexp.Regexp
-
 func TraceRoute(ctx context.Context, url string, out chan<- *models.Node) error {
 	lineChan := make(chan string)
 
-	regex = regexp.MustCompile(tracerouteRegex)
+	regex := regexp.MustCompile(tracerouteRegex)
 
 	args := []string{"-4", "-m 50", "-f 2", "-N 8", url}
 
@@ -31,10 +29,11 @@ func TraceRoute(ctx context.Context, url string, out chan<- *models.Node) error 
 				close(out)
 				return nil
 			}
-			node := parseNode(line)
+			node := parseNode(line, regex)
 			if node != nil {
 				resp, err := api.GetIpLocation(node.IP)
 				if err != nil {
+					log.Printf("Error getting ip location: %v", err)
 					continue
 				}
 
@@ -56,7 +55,7 @@ func TraceRoute(ctx context.Context, url string, out chan<- *models.Node) error 
 	}
 }
 
-func parseNode(hopLine string) *models.Node {
+func parseNode(hopLine string, regex *regexp.Regexp) *models.Node {
 	match := regex.FindStringSubmatch(hopLine)
 	if len(match) < 6 {
 		return nil
