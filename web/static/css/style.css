@@ -156,7 +156,7 @@ input {
 }
 
 .theme-toggle-btn {
-  position: absolute; /* Changed from margin-top */
+  position: absolute;
   top: 15px;
   right: 20px;
   padding: 5px 10px;
@@ -166,7 +166,7 @@ input {
   cursor: pointer;
   font-size: 14px;
   color: var(--text);
-  transition: background-color 0.3s, border-color 0.3s, color 0.3s; /* Added transitions */
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 .theme-toggle-btn:hover {
