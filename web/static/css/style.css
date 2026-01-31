@@ -14,18 +14,22 @@ html {
 }
 
 .target-input-box {
-  background-color: #fff;
+  background-color: var(--input-bg);
+  color: var(--text);
   padding: 15px 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
   z-index: 10;
+  transition: background-color 0.3s, color 0.3s;
+  position: relative; /* Add this */
 }
 
 .target-input-box label {
   font-size: 14px;
   margin-bottom: 5px;
+  color: var(--text);
 }
 
 .input-wrapper {
@@ -37,9 +41,12 @@ html {
   width: 100%;
   padding: 10px 36px 10px 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
   border-radius: 6px;
   box-sizing: border-box;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text);
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 .loader {
@@ -111,11 +118,66 @@ html {
   flex: 1;
 }
 
-
 .custom-marker {
   width: 20px;
   height: 20px;
   background-color: #007cbf;
   border-radius: 50%;
   cursor: pointer;
+}
+
+:root {
+  --bg: #f4f4f4;
+  --text: #000;
+  --input-bg: #fff;
+  --input-border: #ccc;
+  --error-color: red;
+  --spinner-color: #007cbf;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+input {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text);
+}
+
+.error-message {
+  color: var(--error-color);
+}
+
+.loader-btn::before {
+  border-top-color: var(--spinner-color);
+}
+
+.theme-toggle-btn {
+  position: absolute; /* Changed from margin-top */
+  top: 15px;
+  right: 20px;
+  padding: 5px 10px;
+  background-color: transparent;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text);
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s; /* Added transitions */
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--input-border);
+}
+
+body.dark {
+  --bg: #121212;
+  --text: #f0f0f0;
+  --input-bg: #1f1f1f;
+  --input-border: #444;
+  --error-color: #ff6b6b;
+  --spinner-color: #1e90ff;
 }

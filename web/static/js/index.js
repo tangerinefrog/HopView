@@ -1,6 +1,7 @@
 const input = document.getElementById('targetInput');
 const loaderBtn = document.getElementById('loaderBtn');
 const errorBox = document.getElementById('errorMessage');
+const themeToggle = document.getElementById('themeToggle');
 
 const nodesQueue = [];
 let previousCoordinates = [];
@@ -104,3 +105,14 @@ input.addEventListener('keydown', async (e) => {
 });
 
 loaderBtn.addEventListener('click', cancelTrace);
+
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    themeToggle.textContent = 'Light Mode';
+}
+
+themeToggle.addEventListener('click', () => {
+    const darkMode = document.body.classList.toggle('dark');
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+    themeToggle.textContent = darkMode ? 'Light Mode' : 'Dark Mode';
+});
